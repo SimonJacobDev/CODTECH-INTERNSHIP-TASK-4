@@ -1,0 +1,50 @@
+AIM: To design and generate a simple report using Jaspersoft Studio connected to a database.
+
+SOFTWARE REQUIRED:
+Jaspersoft Studio (Community Edition)
+Java Development Kit (JDK 8 or above)
+Database (MySQL / PostgreSQL)
+JDBC Connector
+
+PROCEDURE:
+
+1. Install Jaspersoft Studio
+   Download Jaspersoft Studio from the official TIBCO website.
+   Install it and configure the workspace directory.
+
+2. Create a New Jasper Report
+   Open File → New → Jasper Report.
+   Choose a blank A4 template and click Next.
+
+3. Connect to Database
+   In Repository Explorer → Data Adapters → Create Data Adapter.
+   Select Database JDBC Connection.
+   Provide database URL, username, and password.
+   Test the connection to ensure success.
+
+4. Design the Report Layout
+   Drag and drop fields (like Name, Roll No, Marks, etc.) from the Fields pane.
+   Add static text for titles, page numbers, and headings.
+
+5. Add a SQL Query
+   In Dataset and Query, write a query such as:
+   SELECT student_id, student_name, department, marks FROM student;
+   Click Read Fields to import the fields into the report.
+
+6. Preview the Report
+   Click Preview to view the report output with real data.
+
+7. Export the Report
+   Export the report to PDF, DOCX, or XLSX format using the Export button.
+
+Output:
+A report displaying student details (ID, Name, Department, Marks) in a tabular format.
+
+Student ID    Student Name    Department    Marks
+101           Arjun Kumar     CSE           88
+102           Priya S         ECE           92
+103           Karthik M       MECH          80
+
+Result:
+Successfully designed and generated a dynamic report using Jaspersoft Studio connected to a database.
+
