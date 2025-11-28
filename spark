@@ -1,68 +1,113 @@
-**Aim : Apache Spark – Installation & Deployment**
-
-**Modes of Apache Spark Deployment :**
-
-1. **Standalone Mode :**
-   Spark runs on top of HDFS; Spark and MapReduce execute parallelly for submitted Spark jobs.
-2. **Hadoop YARN / Mesos :**
-   Spark runs on YARN or Mesos without root access; integrates easily with an existing Hadoop stack.
-3. **SIMR (Spark in MapReduce) :**
-   Allows launching Spark jobs using MapReduce with no admin privileges; Spark shell can run directly.
+Here is **your full content EXACTLY like a complete lab record**, with **NO reduction**, **NO shortening**, and including **ALL lines exactly as in the entry**, including **msu@msu-VirtualBox** prompts.
 
 ---
 
-**Spark Installation :**
+## **AIM:**
 
-**Prerequisite :** Fully functional Hadoop framework.
+To install, deploy and configure apache spark
 
-**Step 1 : Download Spark**
-Download `spark-3.5.0-bin-hadoop3.tgz`.
+---
 
-**Step 2 : Extract the file**
+## **Modes of Apache Spark Deployment**
+
+### **1. Standalone Mode in Apache Spark**
+
+Spark is deployed on the top of Hadoop Distributed File System (HDFS).
+For computations, Spark and Map Reduce run in parallel for the Spark jobs submitted to the cluster.
+
+### **2. Hadoop YARN / Mesos**
+
+Apache Spark runs on Mesos or YARN (Yet another Resource Navigator, one of the key features in the second-generation Hadoop) without any root-access or pre-installation.
+It integrates Spark on top Hadoop stack that is already present on the system.
+
+### **3. SIMR (Spark in Map Reduce)**
+
+This is an add-on to the standalone deployment where Spark jobs can be launched by the user and they can use the spark shell without any administrative access.
+
+---
+
+## **SPARK INSTALLATION:**
+
+### **Prerequisite:**
+
+Fully Functional Hadoop Framework
+
+---
+
+### **Step 1: Download Spark**
+
+Download the spark distribution file:
+`spark-3.5.0-bin-hadoop3.tgz`
+
+---
+
+### **Step 2: untar the zip file**
 
 ```
-tar -xvzf spark-3.5.0-bin-hadoop3.tgz
+msu@msu-VirtualBox:~$ tar -xvzf spark-3.5.0-bin-hadoop3.tgz
 ```
 
-**Step 3 : Configure Environment Variables**
-Open `.bashrc`:
+---
+
+### **Step 3: Configuring Spark Environment Variables**
+
+Open .bashrc:
 
 ```
-sudo gedit ~/.bashrc
+msu@msu-VirtualBox:~$ sudo gedit ~/.bashrc
 ```
 
-Add:
+Append the following Spark environment variables to the .bashrc file:
 
 ```
 export SPARK_HOME=/home/msu/spark
 export PATH=$PATH:$SPARK_HOME/bin
 ```
 
-Reload:
+Reload the file using:
 
 ```
-source ~/.bashrc
+msu@msu-VirtualBox:~$ source ~/.bashrc
 ```
 
-**Step 4 : Start Spark Shell**
+Start Spark shell:
 
 ```
-spark-shell
-```
-
----
-
-**Word Count Program (Scala):**
-
-```
-val data = sc.textFile("sparkdata.txt")
-val splitdata = data.flatMap(line => line.split(" "))
-val mapdata = splitdata.map(word => (word, 1))
-val reducedata = mapdata.reduceByKey(_ + _)
-reducedata.collect
+msu@msu-VirtualBox:~$ spark-shell
 ```
 
 ---
 
-**Result :**
-Apache Spark was installed, configured, and the word count program executed successfully.
+## **WORD COUNT PROGRAM: (Scala)**
+
+```
+scala> val data = sc.textFile("sparkdata.txt")
+
+scala> val splitdata = data.flatMap(line => line.split(" "))
+
+scala> val mapdata = splitdata.map(word => (word, 1))
+
+scala> val reducedata = mapdata.reduceByKey(_ + _)
+
+scala> reducedata.collect
+```
+
+---
+
+## **EXPLANATION OF WORD COUNT PROGRAM (FULL SIMPLE EXPLANATION)**
+
+* `val data = sc.textFile("sparkdata.txt")` loads the text file into an RDD so Spark can process it line by line.
+* `flatMap(line => line.split(" "))` splits every line into individual words and flattens the result into a single list of words.
+* `map(word => (word, 1))` converts each word into a key-value pair `(word, 1)` for counting.
+* `reduceByKey(_+_)` adds together all 1s for the same word, giving the total count for each word.
+* Example: `"hello spark hello"` → `("hello",2), ("spark",1)`.
+
+---
+
+## **RESULT:**
+
+Thus, Apache Spark was installed and word count program was successfully executed.
+
+---
+
+If you want, I can convert this into **PDF**, **DOC**, or **Lab Record formatted output**.
