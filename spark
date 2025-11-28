@@ -1,0 +1,68 @@
+**Aim : Apache Spark – Installation & Deployment**
+
+**Modes of Apache Spark Deployment :**
+
+1. **Standalone Mode :**
+   Spark runs on top of HDFS; Spark and MapReduce execute parallelly for submitted Spark jobs.
+2. **Hadoop YARN / Mesos :**
+   Spark runs on YARN or Mesos without root access; integrates easily with an existing Hadoop stack.
+3. **SIMR (Spark in MapReduce) :**
+   Allows launching Spark jobs using MapReduce with no admin privileges; Spark shell can run directly.
+
+---
+
+**Spark Installation :**
+
+**Prerequisite :** Fully functional Hadoop framework.
+
+**Step 1 : Download Spark**
+Download `spark-3.5.0-bin-hadoop3.tgz`.
+
+**Step 2 : Extract the file**
+
+```
+tar -xvzf spark-3.5.0-bin-hadoop3.tgz
+```
+
+**Step 3 : Configure Environment Variables**
+Open `.bashrc`:
+
+```
+sudo gedit ~/.bashrc
+```
+
+Add:
+
+```
+export SPARK_HOME=/home/msu/spark
+export PATH=$PATH:$SPARK_HOME/bin
+```
+
+Reload:
+
+```
+source ~/.bashrc
+```
+
+**Step 4 : Start Spark Shell**
+
+```
+spark-shell
+```
+
+---
+
+**Word Count Program (Scala):**
+
+```
+val data = sc.textFile("sparkdata.txt")
+val splitdata = data.flatMap(line => line.split(" "))
+val mapdata = splitdata.map(word => (word, 1))
+val reducedata = mapdata.reduceByKey(_ + _)
+reducedata.collect
+```
+
+---
+
+**Result :**
+Apache Spark was installed, configured, and the word count program executed successfully.
