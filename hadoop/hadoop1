@@ -1,0 +1,326 @@
+Sure — here is the **same content again exactly**, with **no reduction** and **same formatting** as before.
+
+---
+
+# **AIM**
+
+**To install, configure and run Hadoop and HDFS.**
+
+---
+
+# **STEPS**
+
+1. Installing Java
+2. Downloading / Installing SSH
+3. Installing Hadoop
+4. Configuring Hadoop & Running HDFS
+
+---
+
+# **PROCEDURE**
+
+---
+
+## **Step 1: Update the system**
+
+```bash
+$ sudo apt-get update
+```
+
+> **Note:**
+> If you are using an older Ubuntu version, update the sources list:
+
+```bash
+$ sudo gedit /etc/apt/sources.list
+```
+
+Replace every
+`archive.ubuntu.com` → `old-releases.ubuntu.com`
+
+---
+
+## **Step 2: Switch to root**
+
+```bash
+$ su root
+```
+
+---
+
+## **Step 3: Install Java**
+
+```bash
+# apt-get install openjdk-8-jdk
+```
+
+Check installation:
+
+```bash
+# java -version
+# javac -version
+```
+
+---
+
+## **Step 4: Set JAVA_HOME**
+
+Select Java:
+
+```bash
+# update-alternatives --config java
+```
+
+Edit environment file:
+
+```bash
+# gedit /etc/environment
+```
+
+Add this line:
+
+```
+JAVA_HOME="/usr/lib/jvm/java-8-openjdk-i386"
+```
+
+Reload environment:
+
+```bash
+# source /etc/environment
+# echo $JAVA_HOME
+```
+
+---
+
+## **Step 5: Install SSH**
+
+```bash
+# apt-get install ssh
+```
+
+Generate ssh keys:
+
+```bash
+# ssh-keygen -t rsa -P ""
+```
+
+Authorize:
+
+```bash
+# cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
+```
+
+Test:
+
+```bash
+# ssh localhost
+```
+
+---
+
+## **Step 6: Download Hadoop**
+
+Visit → **[https://hadoop.apache.org/releases.html](https://hadoop.apache.org/releases.html)**
+
+Download:
+**hadoop-2.7.2.tar.gz**
+
+---
+
+## **Step 7: Unpack Hadoop**
+
+```bash
+$ tar -xvzf /home/msu/Downloads/hadoop-2.7.2.tar.gz
+```
+
+Hadoop folder will appear at:
+
+```
+/home/msu/hadoop-2.7.2
+```
+
+---
+
+# **Step 8: Hadoop Configuration**
+
+---
+
+## **1. Edit .bashrc**
+
+```bash
+$ sudo gedit ~/.bashrc
+```
+
+Add at the bottom:
+
+```bash
+# HADOOP VARIABLES START
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-i386
+export HADOOP_INSTALL=/home/msu/hadoop-2.7.2
+export PATH=$PATH:$HADOOP_INSTALL/bin
+export PATH=$PATH:$HADOOP_INSTALL/sbin
+export HADOOP_MAPRED_HOME=$HADOOP_INSTALL
+export HADOOP_COMMON_HOME=$HADOOP_INSTALL
+export HADOOP_HDFS_HOME=$HADOOP_INSTALL
+export YARN_HOME=$HADOOP_INSTALL
+export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_INSTALL/lib/native
+export HADOOP_OPTS="-Djava.library.path=$HADOOP_INSTALL/lib"
+# HADOOP VARIABLES END
+```
+
+Reload:
+
+```bash
+$ source ~/.bashrc
+```
+
+---
+
+## **2. Configure hadoop-env.sh**
+
+```bash
+$ cd hadoop-2.7.2/etc/hadoop
+$ gedit hadoop-env.sh
+```
+
+Add:
+
+```
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-i386
+```
+
+---
+
+## **3. Create NameNode & DataNode directories**
+
+```bash
+$ mkdir ~/hadoop_store
+$ cd ~/hadoop_store
+$ mkdir hdfs
+$ cd hdfs
+$ mkdir namenode
+$ mkdir datanode
+```
+
+---
+
+## **4. Configure hdfs-site.xml**
+
+```bash
+$ gedit hdfs-site.xml
+```
+
+Add inside `<configuration>`:
+
+```xml
+<property>
+    <name>dfs.replication</name>
+    <value>1</value>
+</property>
+
+<property>
+    <name>dfs.namenode.name.dir</name>
+    <value>file:/home/msu/hadoop_store/hdfs/namenode</value>
+</property>
+
+<property>
+    <name>dfs.datanode.data.dir</name>
+    <value>file:/home/msu/hadoop_store/hdfs/datanode</value>
+</property>
+```
+
+---
+
+## **5. Create tmp directory**
+
+```bash
+$ mkdir ~/hadoop-2.7.2/tmp
+```
+
+---
+
+## **6. Configure core-site.xml**
+
+```bash
+$ gedit core-site.xml
+```
+
+Add:
+
+```xml
+<property>
+    <name>hadoop.tmp.dir</name>
+    <value>/home/msu/hadoop-2.7.2/tmp</value>
+</property>
+
+<property>
+    <name>fs.default.name</name>
+    <value>hdfs://localhost:54310</value>
+</property>
+```
+
+---
+
+## **7. Configure mapred-site.xml**
+
+Copy template:
+
+```bash
+$ cp mapred-site.xml.template mapred-site.xml
+$ gedit mapred-site.xml
+```
+
+Add:
+
+```xml
+<property>
+    <name>mapred.job.tracker</name>
+    <value>localhost:54311</value>
+</property>
+```
+
+---
+
+# **Step 9: Format NameNode**
+
+```bash
+$ hadoop namenode -format
+```
+
+---
+
+# **Step 10: Start Hadoop Services**
+
+```bash
+$ cd hadoop-2.7.2/sbin
+$ start-all.sh
+```
+
+Check services:
+
+```bash
+$ jps
+```
+
+You should see:
+
+* NameNode
+* DataNode
+* SecondaryNameNode
+* ResourceManager
+* NodeManager
+
+---
+
+# **OUTPUT**
+
+Successful starting of Hadoop services & HDFS using `jps`.
+
+---
+
+If you want, I can also give:
+
+✔️ Viva Questions & Answers
+✔️ Result / Conclusion
+✔️ Word Count Program (Hadoop MapReduce)
+
+Just tell me!
