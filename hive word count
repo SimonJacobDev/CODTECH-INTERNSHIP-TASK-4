@@ -1,0 +1,152 @@
+AIM
+
+To install Apache Hive and execute a Word Count application using Hive.
+
+PROCEDURE
+Prerequisite
+
+A fully functional Hadoop Framework installed and running.
+
+Step 1: Download and Extract Hive
+msu@msu-VirtualBox:~$ tar -xvzf '/home/msu/Downloads/apache-hive-3.1.2-bin.tar.gz'
+
+
+This extracts Hive into your home directory.
+
+Step 2: Configure Hive Environment Variables
+
+Open .bashrc:
+
+msu@msu-VirtualBox:~$ sudo gedit ~/.bashrc
+
+
+Add the following lines at the end:
+
+# HIVE VARIABLES START
+export HIVE_HOME=/home/msu/apache-hive-3.1.2-bin
+export PATH=$PATH:$HIVE_HOME/bin
+# HIVE VARIABLES END
+
+
+Reload the updated .bashrc:
+
+msu@msu-VirtualBox:~$ source ~/.bashrc
+
+
+Now open hive-config.sh located in:
+
+apache-hive-3.1.2-bin/bin
+
+
+Add Hadoop path:
+
+export HADOOP_HOME=/home/msu/Hadoop-2.7.2
+
+Step 3: Configure HDFS Directories for Hive
+
+Create temp directory:
+
+hdfs dfs -mkdir /tmp
+hdfs dfs -chmod g+w /tmp
+
+
+Create warehouse directory:
+
+hdfs dfs -mkdir -p /user/hive/warehouse
+hdfs dfs -chmod g+w /user/hive/warehouse
+
+
+These directories store Hive metadata and intermediate query results.
+
+Step 4: Configure hive-site.xml
+
+Go to:
+
+apache-hive-3.1.2-bin/conf
+
+
+Copy default template:
+
+cp hive-default.xml.template hive-site.xml
+
+
+Open hive-site.xml and add inside <configuration>:
+
+<property>
+  <name>system:java.io.tmpdir</name>
+  <value>/tmp/hive/java</value>
+</property>
+
+<property>
+  <name>system:user.name</name>
+  <value>${user.name}</value>
+</property>
+
+Step 5: Initialize Derby Database
+
+Hive uses Apache Derby as its default metadata storage.
+
+Initialize schema:
+
+$HIVE_HOME/bin/schematool -dbType derby -initSchema
+
+
+This prepares the metadata tables that Hive needs.
+
+Launch Hive:
+
+hive
+
+WORD COUNT APPLICATION USING HIVE
+
+Prepare an input file:
+
+input.txt
+Cat Tiger Cat Tiger Lion Cat Tiger Lion Cat Lion Tiger
+Cat Lion Cat Tiger Lion Cat Tiger Lion Rat Lion Tiger
+Cat Tiger Cat Tiger Lion Cat Rat Lion Cat Lion Tiger
+
+
+(Place the file at /home/msu/input.txt)
+
+Step 1: Create a Table
+hive> create table inputtable(line STRING);
+
+Step 2: Load Data into the Table
+hive> load data local inpath '/home/msu/input.txt'
+     overwrite into table inputtable;
+
+Step 3: Execute Word Count Using Hive
+
+The following Hive query performs the word count:
+
+create table wordcounttable as
+select word, count(1) as count
+from (
+      select explode(split(line, ' ')) as word
+      from inputtable
+     ) w
+group by word
+order by word;
+
+Explanation of Query
+Part	Meaning
+split(line, ' ')	Splits each line into separate words
+explode(...)	Converts array of words into multiple rows
+group by word	Groups same words together
+count(1)	Counts number of occurrences
+order by word	Sorts alphabetically
+Step 4: View Output
+hive> select * from wordcounttable;
+
+Output
+Cat   11
+Lion  10
+Rat    2
+Tiger 10
+
+RESULT
+
+Hive was successfully installed, configured, and a Word Count application was executed using Hive’s built-in SQL-like processing.
+
+If you want, I can also create a PDF-ready neatly formatted lab record for your submission.
