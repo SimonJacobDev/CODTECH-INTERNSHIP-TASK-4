@@ -1,5 +1,4 @@
-Here is **your full content again**, with the **WordCount program replaced by your Maxtemp program**.
-Everything else is kept **exactly the same**, only the program section is replaced.
+Here is **the same content again exactly as you gave**, with **no reduction and no changes**:
 
 ---
 
@@ -36,7 +35,7 @@ Step 8: Compile the java code
 javac -classpath ${HADOOP_CLASSPATH} -d <classfiles folder> <java file>
 ..Desktop/Wordcountprogram$ javac -classpath ${HADOOP_CLASSPATH} -d
 ‘/home/msu/Desktop/Wordcountprogram/tutclasses’
-‘/home/msu/Desktop/Wordcountprogram/Maxtemp.java’
+‘/home/msu/Desktop/Wordcountprogram/WordCount.java’
 
 Step 9: Creation of jar files
 jar -cvf <JAR_FILE_NAME> -C <CLASSES_FOLDER>/ .
@@ -45,7 +44,7 @@ jar -cvf <JAR_FILE_NAME> -C <CLASSES_FOLDER>/ .
 Step 10: Run the jar files
 hadoop jar <CLASS_NAME> <HDFS_INPUT_DIRECTORY> <HDFS_OUTPUT_DIRECTORY>
 ..Desktop/Wordcountprogram$ hadoop jar
-‘/home/msu/Desktop/Wordcountprogram/firsttutorial.jar’ Maxtemp /wct/Input /wct/Output
+‘/home/msu/Desktop/Wordcountprogram/firsttutorial.jar’ WordCount /wct/Input /wct/Output
 
 Step 11: Output
 hadoop dfs -cat <HDFS_OUTPUT_DIRECTORY>/*
@@ -54,73 +53,66 @@ hadoop dfs -cat <HDFS_OUTPUT_DIRECTORY>/*
 PROGRAM:
 
 ```java
-import java.io.IOException;
-import org.apache.hadoop.conf.Configuration;
+//WordCount.java
+import java.io.IOException; 
+import java.util.StringTokenizer;
+import org.apache.hadoop.conf.Configuration; 
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.*;
-import org.apache.hadoop.mapreduce.*;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.io.IntWritable; 
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job; 
+import org.apache.hadoop.mapreduce.Mapper; 
+import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat; 
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat; 
 
-public class Maxtemp {
+public class WordCount {
+    public static class TokenizerMapper extends Mapper<Object, Text, Text, IntWritable> { 
+        private final static IntWritable one = new IntWritable(1);
+        private Text word = new Text();
 
-    public static class TempMapper 
-            extends Mapper<LongWritable, Text, Text, IntWritable> {
-
-        private Text year = new Text();
-
-        @Override
-        public void map(LongWritable key, Text value, Context context)
-                throws IOException, InterruptedException {
-
-            String[] parts = value.toString().split(" ");
-            if (parts.length == 2) {
-                year.set(parts[0]);
-                int temp = Integer.parseInt(parts[1]);
-                context.write(year, new IntWritable(temp));
+        public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
+            StringTokenizer itr = new StringTokenizer(value.toString()); 
+            while (itr.hasMoreTokens()) {
+                word.set(itr.nextToken());
+                context.write(word, one);
             }
         }
     }
 
-    public static class TempReducer 
-            extends Reducer<Text, IntWritable, Text, IntWritable> {
-
-        @Override
-        public void reduce(Text key, Iterable<IntWritable> values, Context context)
-                throws IOException, InterruptedException {
-
-            int max = Integer.MIN_VALUE;
-            for (IntWritable v : values) {
-                max = Math.max(max, v.get());
+    public static class IntSumReducer extends Reducer<Text,IntWritable,Text,IntWritable> {
+        private IntWritable result = new IntWritable();
+        
+        public void reduce(Text key, Iterable<IntWritable> values, Context context) 
+        throws IOException, InterruptedException {
+            int sum = 0;
+            for(IntWritable val : values) { 
+                sum += val.get();
             }
-
-            context.write(key, new IntWritable(max));
+            result.set(sum); 
+            context.write(key, result);
         }
     }
 
     public static void main(String[] args) throws Exception {
-
         Configuration conf = new Configuration();
-        Job job = Job.getInstance(conf, "Max Temperature");
-
-        job.setJarByClass(Maxtemp.class);
-        job.setMapperClass(TempMapper.class);
-        job.setReducerClass(TempReducer.class);
-
-        job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(IntWritable.class);
-
-        FileInputFormat.addInputPath(job, new Path(args[0]));
-        FileOutputFormat.setOutputPath(job, new Path(args[1]));
-
+        Job job = Job.getInstance(conf, "word count"); 
+        job.setJarByClass(WordCount.class); 
+        job.setMapperClass(TokenizerMapper.class); 
+        job.setCombinerClass(IntSumReducer.class); 
+        job.setReducerClass(IntSumReducer.class); 
+        job.setOutputKeyClass(Text.class); 
+        job.setOutputValueClass(IntWritable.class); 
+        FileInputFormat.addInputPath(job, new Path(args[0])); 
+        FileOutputFormat.setOutputPath(job, new Path(args[1])); 
         System.exit(job.waitForCompletion(true) ? 0 : 1);
     }
 }
 ```
 
 RESULT:
-Thus, the temperature maximum finding program successfully executed using Hadoop Map Reduce.
+Thus, the Word count program successfully executed using Hadoop Map Reduce.
 
 ---
 
-If you want **formatted spacing / headings / borders / alignment**, tell me.
+If you want **same content with bold headings / spacing / alignment**, tell me — I will format it.
