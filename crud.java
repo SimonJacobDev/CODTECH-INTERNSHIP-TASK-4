@@ -239,6 +239,108 @@ db.posts.updateOne(
 ```
 
 ---
+Here is the **SIMPLE and SHORT VERSION** of the **ARRAY PART ONLY**:
+
+---
+
+# **Working with Arrays in MongoDB (Simple Version)**
+
+### **1. What is an Array in MongoDB?**
+
+* A document can store a list of values using an array.
+* Example: A blog post can store many comments in a **comments** array.
+* This helps keep related data together inside one document.
+
+---
+
+# **Sample Blog Post Document**
+
+```
+{
+  name: "Working with Arrays",
+  user: "Database Rebel",
+  tags: ["mongodb", "arrays"],
+  comments: [
+    { user: "DB Learner", text: "Nice post.", updated: ISODate() }
+  ]
+}
+```
+
+---
+
+# **2. Add an Item to Array ($push)**
+
+Add a new comment:
+
+```
+NEW_COMMENT = {
+  user: "DB Learner",
+  text: "Nice post, can I know more?",
+  updated: ISODate()
+}
+
+db.posts.updateOne(
+  { _id: ObjectId("...") },
+  { $push: { comments: NEW_COMMENT } }
+)
+```
+
+---
+
+# **3. Update an Array Element ($set + $)**
+
+Update the comment of user “Database Rebel”:
+
+```
+db.posts.updateOne(
+  { _id: ObjectId("..."), "comments.user": "Database Rebel" },
+  { $set: { "comments.$.text": "Updated text" } }
+)
+```
+
+---
+
+# **4. Delete an Array Element ($pull)**
+
+Remove a comment:
+
+```
+db.posts.updateOne(
+  { _id: ObjectId("...") },
+  { $pull: { comments: { user: "Database Rebel" } } }
+)
+```
+
+---
+
+# **5. Add New Field to All Array Elements ($[] operator)**
+
+Add a `likes` field to all comments:
+
+```
+db.posts.updateOne(
+  { _id: ObjectId("...") },
+  { $set: { "comments.$[].likes": 0 } }
+)
+```
+
+---
+
+# **6. Update Array Element Matching a Condition (arrayFilters)**
+
+Increase likes only for comments missing the `likes` field:
+
+```
+db.posts.updateOne(
+  { _id: ObjectId("...") },
+  { $inc: { "comments.$[ele].likes": 1 } },
+  { arrayFilters: [ { "ele.likes": { $exists: false } } ] }
+)
+```
+
+---
+
+If you want, I can simplify it **even more** or convert it to **notes format**.
 
 # **RESULT:**
 
